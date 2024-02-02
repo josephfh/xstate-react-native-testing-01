@@ -17,13 +17,10 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {createActor} from 'xstate';
+import {testMachine} from './test-machine';
+import {useSelector} from '@xstate/react';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -62,6 +59,11 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const testActor = createActor(testMachine);
+  testActor.start();
+
+  const testValue = useSelector(testActor, snapshot => snapshot.value);
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -71,25 +73,27 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+          <Section title="XState 0.73.3 issue">
+            <View>
+              <Text>Using "react-native": "0.73.3"</Text>
+            </View>
+            <View>
+              <Text>
+                The 'first' state should transition to 'second' after 1000ms
+              </Text>
+            </View>
+            <View>
+              <Text>git checkout main # React Native 0.73.3 (not working)</Text>
+              <Text>git checkout last # React Native 0.73.2 (working)</Text>
+            </View>
           </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
+          <Section title="XState test value:">
+            <Text>{JSON.stringify(testValue)}</Text>
           </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
         </View>
       </ScrollView>
     </SafeAreaView>
