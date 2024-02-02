@@ -13,6 +13,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -52,15 +53,15 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+const testActor = createActor(testMachine);
+testActor.start();
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-
-  const testActor = createActor(testMachine);
-  testActor.start();
 
   const testValue = useSelector(testActor, snapshot => snapshot.value);
 
@@ -79,20 +80,30 @@ function App(): React.JSX.Element {
           }}>
           <Section title="XState 0.73.3 issue">
             <View>
-              <Text>Using "react-native": "0.73.3"</Text>
+              <Text>Using "react-native": "0.73.2"</Text>
             </View>
             <View>
               <Text>
-                The 'first' state should transition to 'second' after 1000ms
+                The 'first' state should transition to 'second' after 2000ms
               </Text>
-            </View>
-            <View>
-              <Text>git checkout main # React Native 0.73.3 (not working)</Text>
-              <Text>git checkout last # React Native 0.73.2 (working)</Text>
+              <TouchableOpacity onPress={() => testActor.send({type: 'click'})}>
+                <Text style={{borderWidth: 1}}>
+                  Press me to manually transition
+                </Text>
+              </TouchableOpacity>
             </View>
           </Section>
           <Section title="XState test value:">
             <Text>{JSON.stringify(testValue)}</Text>
+          </Section>
+          <Section title="Change version">
+            <View>
+              <Text>git checkout main # React Native 0.73.3 (not working)</Text>
+              <Text>git checkout last # React Native 0.73.2 (working)</Text>
+              <Text>
+                cd ios ; bundle exec pod install # reinstall pods each time
+              </Text>
+            </View>
           </Section>
         </View>
       </ScrollView>

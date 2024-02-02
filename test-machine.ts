@@ -6,9 +6,22 @@ export const testMachine = setup({}).createMachine({
   states: {
     first: {
       after: {
-        1000: 'second',
+        2000: 'second',
+      },
+      on: {
+        click: {
+          actions: [() => console.log('click!')],
+          target: 'second',
+        },
       },
     },
-    second: {},
+    second: {
+      on: {
+        click: {
+          actions: [() => console.log('click!')],
+          target: 'first',
+        },
+      },
+    },
   },
 });
